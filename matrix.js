@@ -134,7 +134,7 @@ class Matrix {
     return result;
   }
 /* For some operations we might need to change it.
-*  It was explained in the article and i just wanted to include understand/include it.
+*  It was explained in the article and i just wanted to understand/include it.
 */
   transpose(){
     let result = new Matrix(this.x, this.y);
