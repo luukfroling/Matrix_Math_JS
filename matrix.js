@@ -162,14 +162,12 @@ class Matrix {
     if(m1.x !== m2.y)  return false; //If length of cols != length of rows we need to return an error to exit the function.
     let result = new Matrix(m1.y, m2.x);
     result.fill(0);
-    console.table(result.matrix);
     for(let i = 0; i < m1.y; i++){
       for(let j = 0; j < m2.x; j++){
         let sum = 0;
         for(let k = 0; k < m1.x; k++){
           sum += m1.matrix[i][k] * m2.matrix[k][j];
         }
-        console.log(i, j);
         result.matrix[i][j] = sum;
       }
     }
