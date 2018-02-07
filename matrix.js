@@ -23,7 +23,19 @@ class Matrix {
       this.matrix.push(temp);
     }
   }
-
+/* Returns the sumof all the values inside the matrix.
+*  In neural networks, this can be used to add all the errors to
+*  add to the bias.
+*/
+  getSum(){
+    let sum = 0;
+    for(let i = 0; i < this.y; i++){
+      for(let j = 0; j < this.x; j++){
+        sum += this.matrix[i][j];
+      }
+    }
+    return sum;
+  }
 /* Add a specific number to every element ( if a single number is passed as an argument).
 *  When another instance of Matrix is passed, tThe numbers are added element wise.
 */
@@ -91,6 +103,17 @@ class Matrix {
     return result;
   }
 
+/* As the vocab array increases we want to increase the number of inputs in the weight matrices.
+*  We want to be able to do the same to the outputs.
+*/
+
+  static addInput(m1){
+    return Matrix.concatinateX(m1, new Matrix(m1.y));
+  }
+
+  static addOutput(m1){
+    return Matrix.concatinateY(m1,  Matrix.transpose(new Matrix(m1.x)));
+  }
 
 /* We need a function to apply a function to a matrix.
 *  This function can be passed in and will be applied.
@@ -104,6 +127,7 @@ class Matrix {
         this.matrix[i][j] = fn(val);
       }
     }
+    return this;
   }
 
 /* Multiply every number in the matrix with a specific scalar.
@@ -124,6 +148,16 @@ class Matrix {
         }
       }
     }
+  }
+
+  static scale(m1, m2){
+    let result = new Matrix(m1.y, m1.x);
+    for(let i = 0; i < m1.y; i++){
+      for(let j = 0; j < m1.x; j++){
+        result.matrix[i][j] = m1.matrix[i][j] * m2.matrix[i][j];
+      }
+    }
+    return result;
   }
 /*Fill the entire matrix with the specified number.
 * This works with a number only. Kinda obvious i guess...
@@ -226,7 +260,11 @@ class Matrix {
     if(m2 instanceof Array){
       m2 = Matrix.fromArray(m2);
     }
-    if(m1.x !== m2.y)  return false; //If length of cols != length of rows we need to return an error to exit the function.
+    if(m1.x != m2.y) {
+      console.log("m1 x = ", m1.x, "- m2 y = ", m2.y);
+      console.log("unequal sizes");
+      return false; //If length of cols != length of rows we need to return an error to exit the function.
+    }
     let result = new Matrix(m1.y, m2.x);
     result.fill(0);
     for(let i = 0; i < m1.y; i++){
@@ -244,6 +282,53 @@ class Matrix {
 * This function will add the 2 given in the parameters together.
 * Within the neural networks this is used to add the input and hidden layer together, so it can be processed into the weights.
 */
+  static concatinateY(m1, m2){
+    if(m2 instanceof Array){
+      console.log(m1.y, m2.length);
+      let result = new Matrix(m1.y + m2.length);
+      for(let i = 0; i < m1.y; i++){
+        result.matrix[i][0] = m1.matrix[i][0];
+      }
+      for(let i = m1.y; i < m1.y + m2.length; i++){
+        result.matrix[i][0] = m2[i - m1.y];
+      }
+      return result;
+    } else {
+      let result = new Matrix(m1.y + m2.y, m1.x);
+      for(let i = 0; i < m1.y; i++){
+        for(let j = 0; j < m1.x; j++){
+          result.matrix[i][j] = m1.matrix[i][j];
+        }
+      }
+      for(let i = m1.y; i < m1.y + m2.y; i++){
+        for(let j = 0; j < m1.x; j++){
+          result.matrix[i][j] = m2.matrix[i - m1.y][j];
+        }
+      }
+      return result;
+    }
+  }
+
+  static concatinateX(m1, m2){
+    let result = new Matrix(m1.y, m1.x + m2.x);
+    for(let i = 0; i < m1.y; i++){
+      for(let j = 0; j < m1.x; j++){
+        result.matrix[i][j] = m1.matrix[i][j];
+      }
+    }
+    for(let i = 0; i < m1.y; i++){
+      for(let j = m1.x; j < m1.x + m2.x; j++){
+        result.matrix[i][j] = m2.matrix[i][j - m1.x];
+      }
+    }
+    return result;
+  }
+
+  /* I will leave in the older version of the function as well to prevent
+  *  some of my older programs from breaking. And maybe this is easier to use.
+  *  This concatinate will basically add 2 arrays together in the form of a matrix.
+  */
+
   static concatinate(m1, m2){
     if(m2 instanceof Array){
       let result = new Matrix(m1.y + m2.length);
