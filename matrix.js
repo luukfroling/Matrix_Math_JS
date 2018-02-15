@@ -350,6 +350,12 @@ class Matrix {
       return result;
     }
   }
+
+  static fromJSON(data){
+    let result = new Matrix(data.y, data.x);
+    result.matrix = data.matrix;
+    return result;
+  }
 /* Show the matrix in a table. This happens in the console.
 *  This.y and this.x correspond with the positions in the table.
 */
