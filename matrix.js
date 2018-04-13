@@ -209,8 +209,8 @@ class Matrix {
     return result;
   }
 
-  fromArray(a){
-    for(let i = 0; i < a.length; i++){
+  fromArray(arr){
+    for(let i = 0; i < arr.length; i++){
       this.matrix[i][0] = arr[i];
     }
   }
